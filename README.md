@@ -1,7 +1,7 @@
-# HOLA Token
+# Reward Changing Token
 
-NAME : HOLA
-Symbol: HOLA
+NAME : Token
+Symbol: TKN
 Supply: 1 Billion / 1,000,000,000
 
 # 16% buy Tax

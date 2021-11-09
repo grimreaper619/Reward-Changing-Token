@@ -29,6 +29,13 @@ module.exports = {
    gasPrice: 10000000000,
    skipDryRun: true, // Skip dry run before migrations? (default: false for public nets )
   },
+  goerli: {
+    provider: () => 
+       new HDWalletProvider(process.env.MNEMONIC, process.env.GOERLI),
+    network_id: 5, // eslint-disable-line camelcase
+    gas: 12000000,
+    gasPrice: 10000000000,
+  },
   bsctestnet: {
    provider: () =>
     new HDWalletProvider(process.env.MNEMONIC, process.env.BSCTESTNET),

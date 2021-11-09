@@ -8,7 +8,7 @@ import "./math/IterableMapping.sol";
 import "@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol";
 import "@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol";
 
-contract HOLA is ERC20, Ownable {
+contract TOKEN is ERC20, Ownable {
     using SafeMath for uint256;
 
     struct BuyFee {
@@ -40,7 +40,7 @@ contract HOLA is ERC20, Ownable {
     uint16 private totalBuyFee;
     uint16 private totalSellFee;
 
-    HOLADividendTracker public dividendTracker;
+    TOKENDividendTracker public dividendTracker;
 
     address private constant deadWallet = address(0xdead);
 
@@ -107,8 +107,8 @@ contract HOLA is ERC20, Ownable {
         address indexed processor
     );
 
-    constructor() ERC20("HOLA", "HOLA") {
-        dividendTracker = new HOLADividendTracker();
+    constructor() ERC20("TOKEN", "TKN") {
+        dividendTracker = new TOKENDividendTracker();
 
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(
             0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3
@@ -174,16 +174,16 @@ contract HOLA is ERC20, Ownable {
     function updateDividendTracker(address newAddress) public onlyOwner {
         require(
             newAddress != address(dividendTracker),
-            "HOLA: The dividend tracker already has that address"
+            "TOKEN: The dividend tracker already has that address"
         );
 
-        HOLADividendTracker newDividendTracker = HOLADividendTracker(
+        TOKENDividendTracker newDividendTracker = TOKENDividendTracker(
             payable(newAddress)
         );
 
         require(
             newDividendTracker.owner() == address(this),
-            "HOLA: The new dividend tracker must be owned by the HOLA token contract"
+            "TOKEN: The new dividend tracker must be owned by the TOKEN token contract"
         );
 
         newDividendTracker.excludeFromDividends(address(newDividendTracker));
@@ -199,7 +199,7 @@ contract HOLA is ERC20, Ownable {
     function updateUniswapV2Router(address newAddress) public onlyOwner {
         require(
             newAddress != address(uniswapV2Router),
-            "HOLA: The router already has that address"
+            "TOKEN: The router already has that address"
         );
         emit UpdateUniswapV2Router(newAddress, address(uniswapV2Router));
         uniswapV2Router = IUniswapV2Router02(newAddress);
@@ -211,7 +211,7 @@ contract HOLA is ERC20, Ownable {
     function excludeFromFees(address account, bool excluded) public onlyOwner {
         require(
             _isExcludedFromFees[account] != excluded,
-            "HOLA: Account is already excluded"
+            "TOKEN: Account is already excluded"
         );
         _isExcludedFromFees[account] = excluded;
 
@@ -297,7 +297,7 @@ contract HOLA is ERC20, Ownable {
     {
         require(
             pair != uniswapV2Pair,
-            "HOLA: The PancakeSwap pair cannot be removed from automatedMarketMakerPairs"
+            "TOKEN: The PancakeSwap pair cannot be removed from automatedMarketMakerPairs"
         );
 
         _setAutomatedMarketMakerPair(pair, value);
@@ -310,7 +310,7 @@ contract HOLA is ERC20, Ownable {
     function _setAutomatedMarketMakerPair(address pair, bool value) private {
         require(
             automatedMarketMakerPairs[pair] != value,
-            "HOLA: Automated market maker pair is already set to that value"
+            "TOKEN: Automated market maker pair is already set to that value"
         );
         automatedMarketMakerPairs[pair] = value;
 
@@ -324,11 +324,11 @@ contract HOLA is ERC20, Ownable {
     function updateGasForProcessing(uint256 newValue) public onlyOwner {
         require(
             newValue >= 200000 && newValue <= 500000,
-            "HOLA: gasForProcessing must be between 200,000 and 500,000"
+            "TOKEN: gasForProcessing must be between 200,000 and 500,000"
         );
         require(
             newValue != gasForProcessing,
-            "HOLA: Cannot update gasForProcessing to same value"
+            "TOKEN: Cannot update gasForProcessing to same value"
         );
         emit GasForProcessingUpdated(newValue, gasForProcessing);
         gasForProcessing = newValue;
@@ -654,7 +654,7 @@ contract HOLA is ERC20, Ownable {
     }
 }
 
-contract HOLADividendTracker is Ownable, DividendPayingToken {
+contract TOKENDividendTracker is Ownable, DividendPayingToken {
     using SafeMath for uint256;
     using SafeMathInt for int256;
     using IterableMapping for IterableMapping.Map;
@@ -679,7 +679,7 @@ contract HOLADividendTracker is Ownable, DividendPayingToken {
     );
 
     constructor()
-        DividendPayingToken("HOLA_Dividen_Tracker", "HOLA_Dividend_Tracker")
+        DividendPayingToken("TOKEN_Dividen_Tracker", "TOKEN_Dividend_Tracker")
     {
         claimWait = 3600;
         minimumTokenBalanceForDividends = 20000 * (10**18); //must hold 20000+ tokens
@@ -690,13 +690,13 @@ contract HOLADividendTracker is Ownable, DividendPayingToken {
         address,
         uint256
     ) internal pure override {
-        require(false, "HOLA_Dividend_Tracker: No transfers allowed");
+        require(false, "TOKEN_Dividend_Tracker: No transfers allowed");
     }
 
     function withdrawDividend() public pure override {
         require(
             false,
-            "HOLA_Dividend_Tracker: withdrawDividend disabled. Use the 'claim' function on the main HOLA contract."
+            "TOKEN_Dividend_Tracker: withdrawDividend disabled. Use the 'claim' function on the main TOKEN contract."
         );
     }
 
@@ -713,11 +713,11 @@ contract HOLADividendTracker is Ownable, DividendPayingToken {
     function updateClaimWait(uint256 newClaimWait) external onlyOwner {
         require(
             newClaimWait >= 3600 && newClaimWait <= 86400,
-            "HOLA_Dividend_Tracker: claimWait must be updated to between 1 and 24 hours"
+            "TOKEN_Dividend_Tracker: claimWait must be updated to between 1 and 24 hours"
         );
         require(
             newClaimWait != claimWait,
-            "HOLA_Dividend_Tracker: Cannot update claimWait to same value"
+            "TOKEN_Dividend_Tracker: Cannot update claimWait to same value"
         );
         emit ClaimWaitUpdated(newClaimWait, claimWait);
         claimWait = newClaimWait;
