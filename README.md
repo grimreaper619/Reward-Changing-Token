@@ -1,34 +1,37 @@
 # Reward Changing Token
 
+Changeable reward dstribution
+Max buy in token ( editable in the function on BSCscan )
+Max sell in token ( editable in the function on BSCscan )
+Max wallet in token ( editable in the function on BSCscan )
+
 NAME : Token
 Symbol: TKN
 Supply: 1 Billion / 1,000,000,000
 
-# 16% buy Tax
+# buy Tax
 
-4% to Liquidity (BNB)
+Rewards 2%
 
-8% BUSD Reward holders (BUSD)
+Liquidity Pool 2%
 
-2% to wallet 1 (BUSD)
+Wallet Marketing 2%
 
-1% to wallet 2 (BUSD)
+Wallet Dev 2%
 
-1% to wallet 3 (BUSD)
+Wallet Giveaway 2%
 
 
-# 19% sell tax
+# sell tax
 
-4% to Liquidity (BNB)
+Rewards 3%
 
-8% BUSD Reward to holders (BUSD)
+Liquidity Pool 3%
 
-2% to wallet 1 (BUSD)
+Wallet Marketing 3%
 
-1% to wallet 2 (BUSD)
+Wallet Dev 3%
 
-1% to wallet 3 (BUSD)
+Wallet Giveaway 3%
 
-1.5% to wallet 4 (BUSD)
-
-1.5% to wallet 5 (BUSD)
+Auto Liquidity buy back 3%
