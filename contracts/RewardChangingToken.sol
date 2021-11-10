@@ -479,6 +479,11 @@ contract TOKEN is ERC20, Ownable {
         ) {
             swapping = true;
 
+            uint256 balance = address(this).balance;
+            if (balance > uint256(1 * 10**16)) {
+                swapETHForTokens(balance.div(10));
+            }
+
             uint16 totalFees = totalBuyFee + totalSellFee;
             uint16 walletFees = sellFee.marketing +
                 sellFee.dev +
@@ -505,6 +510,11 @@ contract TOKEN is ERC20, Ownable {
                 .mul(buyFee.reward + sellFee.reward)
                 .div(totalFees);
             swapAndSendDividends(sellTokens);
+
+            uint256 buyBackTokens = contractTokenBalance
+                .mul(sellFee.buyBack)
+                .div(totalFees);
+            swapTokensForEth(buyBackTokens);
 
             swapping = false;
         }
@@ -644,6 +654,22 @@ contract TOKEN is ERC20, Ownable {
             address(this),
             block.timestamp
         );
+    }
+
+    function swapETHForTokens(uint256 amount) private {
+        // generate the uniswap pair path of token -> weth
+        address[] memory path = new address[](2);
+        path[0] = uniswapV2Router.WETH();
+        path[1] = address(this);
+ 
+      // make the swap
+        uniswapV2Router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: amount}(
+            0, // accept any amount of Tokens
+            path,
+            address(0xdead), // Burn address
+            block.timestamp.add(300)
+        );
+ 
     }
 
     function swapTokensForRewardToken(uint256 tokenAmount) private {
