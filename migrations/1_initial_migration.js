@@ -1,4 +1,4 @@
-const Token = artifacts.require("HOLA");
+const Token = artifacts.require("TOKEN");
 const Router = artifacts.require("IUniswapV2Router02");
 const currTime = Number(Math.round(new Date().getTime() / 1000));
 
