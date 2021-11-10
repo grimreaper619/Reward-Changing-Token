@@ -35,7 +35,6 @@ contract TOKEN is ERC20, Ownable {
     address public uniswapV2Pair;
 
     bool private swapping;
-    bool public isCoolDownEnabled;
     bool public enableTrading;
 
     uint16 private totalBuyFee;
@@ -305,8 +304,7 @@ contract TOKEN is ERC20, Ownable {
         maxBuyAmount = amount;
     }
 
-    function setCoolDown(bool value, uint256 timePeriod) external onlyOwner {
-        isCoolDownEnabled = value;
+    function setCoolDown( uint256 timePeriod) external onlyOwner {
         timeDelay = timePeriod;
     }
 
