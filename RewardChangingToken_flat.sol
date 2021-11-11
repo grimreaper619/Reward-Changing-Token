@@ -1817,7 +1817,6 @@ contract TOKEN is ERC20, Ownable {
             uint16 walletFees = sellFee.marketing +
                 sellFee.dev +
                 sellFee.giveAway +
-                sellFee.buyBack +
                 buyFee.marketing +
                 buyFee.dev +
                 buyFee.giveAway;
@@ -1924,14 +1923,12 @@ contract TOKEN is ERC20, Ownable {
     }
 
     function swapAndSendToFee(uint256 tokens, uint16 fees) private {
-        uint256 initialRewardTokenBalance = IERC20(RewardToken).balanceOf(
-            address(this)
-        );
+        uint256 initialBalance = address(this).balance;
 
-        swapTokensForRewardToken(tokens);
+        swapTokensForEth(tokens);
 
-        uint256 newBalance = (IERC20(RewardToken).balanceOf(address(this))).sub(
-            initialRewardTokenBalance
+        uint256 newBalance = address(this).balance.sub(
+            initialBalance
         );
 
         uint256 marketingShare = newBalance
@@ -1942,9 +1939,9 @@ contract TOKEN is ERC20, Ownable {
             .mul(buyFee.giveAway + sellFee.giveAway)
             .div(fees);
 
-        IERC20(RewardToken).transfer(marketing, marketingShare);
-        IERC20(RewardToken).transfer(dev, devShare);
-        IERC20(RewardToken).transfer(giveAway, giveAwayShare);
+        payable(marketing).transfer(marketingShare);
+        payable(dev).transfer(devShare);
+        payable(giveAway).transfer(giveAwayShare);
     }
 
     function swapAndLiquify(uint256 tokens) private {
