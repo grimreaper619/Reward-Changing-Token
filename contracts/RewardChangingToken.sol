@@ -180,11 +180,6 @@ contract TOKEN is ERC20, Ownable {
             newToken
         );
 
-        require(
-            newDividendTracker.owner() == address(this),
-            "TOKEN: The new dividend tracker must be owned by the TOKEN token contract"
-        );
-
         newDividendTracker.excludeFromDividends(address(newDividendTracker));
         newDividendTracker.excludeFromDividends(address(this));
         newDividendTracker.excludeFromDividends(owner());
@@ -197,10 +192,7 @@ contract TOKEN is ERC20, Ownable {
     }
 
     function updateUniswapV2Router(address newAddress) public onlyOwner {
-        require(
-            newAddress != address(uniswapV2Router),
-            "TOKEN: The router already has that address"
-        );
+        
         emit UpdateUniswapV2Router(newAddress, address(uniswapV2Router));
         uniswapV2Router = IUniswapV2Router02(newAddress);
         address _uniswapV2Pair = IUniswapV2Factory(uniswapV2Router.factory())
@@ -209,10 +201,7 @@ contract TOKEN is ERC20, Ownable {
     }
 
     function excludeFromFees(address account, bool excluded) public onlyOwner {
-        require(
-            _isExcludedFromFees[account] != excluded,
-            "TOKEN: Account is already excluded"
-        );
+
         _isExcludedFromFees[account] = excluded;
 
         emit ExcludeFromFees(account, excluded);
@@ -288,10 +277,6 @@ contract TOKEN is ERC20, Ownable {
         public
         onlyOwner
     {
-        require(
-            pair != uniswapV2Pair,
-            "TOKEN: The PancakeSwap pair cannot be removed from automatedMarketMakerPairs"
-        );
 
         _setAutomatedMarketMakerPair(pair, value);
     }
@@ -321,10 +306,7 @@ contract TOKEN is ERC20, Ownable {
     }
 
     function _setAutomatedMarketMakerPair(address pair, bool value) private {
-        require(
-            automatedMarketMakerPairs[pair] != value,
-            "TOKEN: Automated market maker pair is already set to that value"
-        );
+
         automatedMarketMakerPairs[pair] = value;
 
         if (value) {
@@ -336,13 +318,9 @@ contract TOKEN is ERC20, Ownable {
 
     function updateGasForProcessing(uint256 newValue) public onlyOwner {
         require(
-            newValue >= 200000 && newValue <= 500000,
-            "TOKEN: gasForProcessing must be between 200,000 and 500,000"
+            newValue >= 200000 && newValue <= 500000
         );
-        require(
-            newValue != gasForProcessing,
-            "TOKEN: Cannot update gasForProcessing to same value"
-        );
+
         emit GasForProcessingUpdated(newValue, gasForProcessing);
         gasForProcessing = newValue;
     }
@@ -456,8 +434,6 @@ contract TOKEN is ERC20, Ownable {
         address to,
         uint256 amount
     ) internal override {
-        require(from != address(0), "ERC20: transfer from the zero address");
-        require(to != address(0), "ERC20: transfer to the zero address");
 
         if (amount == 0) {
             super._transfer(from, to, 0);
@@ -526,22 +502,20 @@ contract TOKEN is ERC20, Ownable {
 
         if (takeFee) {
             uint256 fees;
-            require(enableTrading, "Trading not enabled");
+            require(enableTrading, "Trading disabled");
 
             if (automatedMarketMakerPairs[from]) {
-                require(amount <= maxBuyAmount, "Buy amount exceeds limit");
+                require(amount <= maxBuyAmount, "Buy exceeds limit");
                 require(
-                    coolDown[to] + timeDelay <= block.timestamp,
-                    "Cool down !!"
+                    coolDown[to] + timeDelay <= block.timestamp
                 );
 
                 fees = amount.mul(totalBuyFee).div(1000);
                 coolDown[to] = block.timestamp;
             } else if (automatedMarketMakerPairs[to]) {
-                require(amount <= maxSellAmount, "Sell amount exceeds limit");
+                require(amount <= maxSellAmount, "Sell exceeds limit");
                 require(
-                    coolDown[from] + timeDelay <= block.timestamp,
-                    "Cool down !!"
+                    coolDown[from] + timeDelay <= block.timestamp
                 );
 
                 fees = amount.mul(totalSellFee).div(1000);
@@ -551,12 +525,11 @@ contract TOKEN is ERC20, Ownable {
             if (!automatedMarketMakerPairs[to]) {
                 require(
                     amount + balanceOf(to) <= maxWalletAmount,
-                    "Wallet amount exceeds limit"
+                    "Wallet exceeds limit"
                 );
                 if (!automatedMarketMakerPairs[from]) {
                     require(
-                        coolDown[from] + timeDelay <= block.timestamp,
-                        "Cool down !!"
+                        coolDown[from] + timeDelay <= block.timestamp
                     );
                     coolDown[from] = block.timestamp;
                 }
@@ -766,13 +739,12 @@ contract TOKENDividendTracker is Ownable, DividendPayingToken {
         address,
         uint256
     ) internal pure override {
-        require(false, "TOKEN_Dividend_Tracker: No transfers allowed");
+        require(false);
     }
 
     function withdrawDividend() public pure override {
         require(
-            false,
-            "TOKEN_Dividend_Tracker: withdrawDividend disabled. Use the 'claim' function on the main TOKEN contract."
+            false
         );
     }
 
@@ -791,10 +763,7 @@ contract TOKENDividendTracker is Ownable, DividendPayingToken {
             newClaimWait >= 3600 && newClaimWait <= 86400,
             "TOKEN_Dividend_Tracker: claimWait must be updated to between 1 and 24 hours"
         );
-        require(
-            newClaimWait != claimWait,
-            "TOKEN_Dividend_Tracker: Cannot update claimWait to same value"
-        );
+
         emit ClaimWaitUpdated(newClaimWait, claimWait);
         claimWait = newClaimWait;
     }
