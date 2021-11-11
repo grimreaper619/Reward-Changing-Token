@@ -1360,7 +1360,7 @@ contract DividendPayingToken is ERC20, Ownable, DividendPayingTokenInterface, Di
 
 
 
-pragma solidity ^0.8.8;
+pragma solidity ^0.8.10;
 
 
 contract TOKEN is ERC20, Ownable {
